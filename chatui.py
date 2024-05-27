@@ -122,3 +122,21 @@ class Application(ttk.Frame):
 
     def onQuit(self):
         self.quitCommand()
+
+if __name__ == "__main__":   
+    def queryCommand(**kwargs):
+        return kwargs['text'].upper()
+
+    root = Tk()
+    style = ttk.Style()
+    print(style.map('TButton'))
+    print(style.map('TLabel'))
+    defineStyles(style)
+    ui = Application(root,
+                     instructions="""Placeholder for actual instructions.""",
+                     quitCommand=root.destroy,
+                     exportCommand=print,
+                     queryCommand=queryCommand,
+                     enableDeveloperTools=True)
+    ui.pack(fill=BOTH, expand=True)
+    root.mainloop()
