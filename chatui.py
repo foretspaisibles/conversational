@@ -30,7 +30,7 @@ class SystemInstructions(ttk.Frame):
         self.text = Text(self, width=TEXT_WIDTH, height=10)
         self.text.insert(END, self.instructions)
         self.label.pack()
-        self.text.pack()
+        self.text.pack(fill=BOTH, expand=True)
 
 class Conversation(ttk.Frame):
     """A widget displaying a conversation."""
@@ -38,14 +38,14 @@ class Conversation(ttk.Frame):
         ttk.Frame.__init__(self, parent)
         self.parent = parent
         self.text = Text(self, width=TEXT_WIDTH, height=40)
-        self.scrollbar = Scrollbar(self)
+        self.scrollbar = ttk.Scrollbar(self)
 
         self.scrollbar.config(command=self.text.yview)
-        self.text.config(yscrollcommand=self.scrollbar.set)
+        self.text.config(yscrollcommand=self.scrollbar.set, setgrid=1)
         self.querySeparator = ""
         self.text.tag_configure("query", font="Verdana 14 bold")
         self.text.tag_configure("reply", font="Verdana 14")
-        self.text.pack(side=LEFT, fill=Y)
+        self.text.pack(side=LEFT, fill=BOTH, expand=True)
         self.scrollbar.pack(side=RIGHT, fill=Y)
 
     def insertQuery(self, text):
@@ -67,13 +67,12 @@ class Toolbar(ttk.Frame):
         self.quitbutton = ttk.Button(self, text="⚠️ Quit", command=self.quitCommand)
         self.export = ttk.Button(self, text="Export", command=self.exportCommand)
         self.query = ttk.Button(self, text="Query", command=self.queryCommand)
-        self.quitbutton.pack(side=LEFT)
-        self.export.pack(side=LEFT)
-        self.query.pack(side=LEFT)
+        for button in [self.quitbutton, self.export, self.query]:
+            button.pack(side=LEFT, padx=2, pady=5)
 
         if kwargs.get('enableDeveloperTools', False):
             self.randomQuery = ttk.Button(self, text="👩‍💻 RandomQuery", command=(lambda : self.queryCommand(text="Some random text.")))
-            self.randomQuery.pack(side=RIGHT)
+            self.randomQuery.pack(side=RIGHT, padx=2, pady=5)
 
 class UserInput(ttk.Frame):
     """A widget for user input."""
@@ -81,7 +80,7 @@ class UserInput(ttk.Frame):
         ttk.Frame.__init__(self, parent)
         self.parent = parent
         self.text = Text(self, width=TEXT_WIDTH, height=10)
-        self.text.pack()
+        self.text.pack(fill=BOTH, expand=True)
 
     def retrieve(self):
         userInput = self.text.get("1.0",'end-1c')
@@ -100,12 +99,14 @@ class Application(ttk.Frame):
         self.conversation = Conversation(self)
         self.chat = [{'role': 'system', 'content': kwargs['instructions']}]
         self.toolbar = Toolbar(self, quitCommand=self.onQuit, exportCommand=self.onExport, queryCommand=self.onQuery, enableDeveloperTools=kwargs.get('enableDeveloperTools', False))
+        self.userInputLabel = ttk.Label(self, text="User Input")
         self.userInput = UserInput(self)
-        self.toolbar.pack()
-        self.instructions.pack()
+        self.toolbar.pack(fill=X, expand=True)
+        self.instructions.pack(fill=BOTH, expand=True)
         self.conversationLabel.pack()
         self.conversation.pack(fill=BOTH, expand=True)
-        self.userInput.pack()
+        self.userInputLabel.pack()
+        self.userInput.pack(fill=BOTH, expand=True)
         
     def onQuery(self, text=None):
         if text is None:
